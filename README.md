@@ -3,7 +3,7 @@
 ## TL;DR
 
 ```
-ansible-playbook --connection=local 127.0.0.1 playbook.yml --extra-vars "coyo_version=18.11.5 other_variable=foo"
+ansible-playbook --connection=local 127.0.0.1 playbook.yml --extra-vars "coyo_version=18.11.5 coyo_url=contoso.com coyo_profile=prod coyo_management_user=admin coyo_management_password=Sup3rS3cure coyo_db_name=coyo coyo_db_user=coyo-postgres coyo_db_password=Sup3rD4tabase"
 ```
 
 ## Introduction

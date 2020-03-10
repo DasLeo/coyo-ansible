@@ -1,7 +1,12 @@
 ---
 - hosts: coyo-hosts
   vars:
-    docker_compose_version: 1.18.0
+    - docker_compose_version: 1.18.0
+    - cert_path: "/home/coyo/certificate"
+    - coyo_cert: "{{ cert_path }}{{ coyo_url }}.crt"
+    - pempath: "{{ cert_path }}{{ coyo_url }}.pem"
+    - csrpath: "{{ cert_path }}{{ coyo_url }}.csr"
+    - pfxpath: "{{ cert_path }}{{ coyo_url }}.pfx"
   become: yes
   tasks:
   - name: Install Docker
@@ -40,6 +45,79 @@
       src: "https://download.coyoapp.com/release/enterprise/coyo4_{{ coyo_version }}.zip"
       dest: /home/coyo/
       remote_src: yes
+
+  - name: Substitute COYO backend URL
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_BACKEND_URL='
+      line: 'COYO_BACKEND_URL={{ coyo_url }}'
+  - name: Substitute COYO frontend URL
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_FRONTEND_URL='
+      line: 'COYO_FRONTEND_URL={{ coyo_url }}'
+  - name: Substitute COYO profile mode
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_PROFILE='
+      line: 'COYO_PROFILE={{ coyo_profile }}'
+  - name: Substitute COYO management user
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_MANAGEMENT_USER='
+      line: 'COYO_MANAGEMENT_USER={{ coyo_management_user }}'
+  - name: Substitute COYO database name
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_DB_NAME='
+      line: 'COYO_DB_NAME={{ coyo_db_name }}'
+  - name: Substitute COYO database user
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_DB_USER='
+      line: 'COYO_DB_USER={{ coyo_db_user }}'
+  - name: Substitute COYO database password
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_DB_PASSWORD='
+      line: 'COYO_DB_PASSWORD={{ coyo_db_password }}'
+
+  - file:
+      path: "{{ cert_path }}"
+      state: directory
+  - name: "Generate the private key file to sign the CSR"
+    openssl_privatekey:
+      path: "{{ pempath }}"
+      cipher: aes256
+  - name: "Generate the CSR file signed with the private key"
+    openssl_csr:
+      path: "{{ csrpath }}"
+      privatekey_path: "{{ pempath }}"
+      privatekey_passphrase: "{{ private_key_password }}"
+      common_name: "{{ coyo_url }}"
+  - name: "Sign the CSR file as a CA to turn it into a certificate"
+    openssl_certificate:
+      path: "{{ coyo_cert }}"
+      privatekey_path: "{{ pempath }}"
+      privatekey_passphrase: "{{ private_key_password }}"
+      csr_path: "{{ csrpath }}"
+      provider: selfsigned
+  - name: "Convert the signed certificate into a PKCS12 file with the attached private key"
+    openssl_pkcs12:
+      action: export
+      path: "{{ pfxpath }}"
+      name: "{{ coyo_url }}"
+      privatekey_path: "{{ pempath }}"
+      privatekey_passphrase: "{{ private_key_password }}"
+      passphrase: password
+      certificate_path: "{{ coyo_cert }}"
+      state: present
+
+  - name: Substitute COYO SSL certificate
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_CERT_FILE='
+      line: 'COYO_CERT_FILE={{ coyo_cert }}'
 
   - name: Run start COYO setup script
     shell: ./start.sh
