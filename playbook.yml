@@ -66,6 +66,11 @@
       path: /home/coyo/.env
       regexp: '^COYO_MANAGEMENT_USER='
       line: 'COYO_MANAGEMENT_USER={{ coyo_management_user }}'
+  - name: Substitute COYO management password
+    lineinfile:
+      path: /home/coyo/.env
+      regexp: '^COYO_MANAGEMENT_PASSWORD='
+      line: 'COYO_MANAGEMENT_PASSWORD={{ coyo_management_user }}'
   - name: Substitute COYO database name
     lineinfile:
       path: /home/coyo/.env
