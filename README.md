@@ -1,0 +1,28 @@
+# COYO Ansible Playbook
+
+## TL;DR
+
+```
+ansible-playbook --connection=local 127.0.0.1 playbook.yml --extra-vars "coyo_version=18.11.5 other_variable=foo"
+```
+
+## Introduction
+
+This playbook makes it really easy to install COYO on a new Ubuntu host.
+
+## Requirements
+
+- Ubuntu 18.04 LTS
+- Python ```apt install python```
+- Ansible ```apt install ansible```
+- sudo ```apt install sudo```
+
+## Install COYO
+
+To install COYO, you need to clone this repository first and then run the Ansible Playbook on your local Ubuntu host. 
+
+```
+git clone https://github.com/DasLeo/ansible-coyo
+cd ansible-coyo
+ansible-playbook --connection=local 127.0.0.1 playbook.yml
+```

@@ -1,0 +1,50 @@
+---
+- hosts: coyo-hosts
+  vars:
+    docker_compose_version: 1.18.0
+  become: yes
+  tasks:
+  - name: Install Docker
+    apt:
+      name: docker.io
+      state: present
+
+  - name: enable and start docker
+    systemd:
+      name: docker.service
+      state: started
+      enabled: yes
+
+  - name: Install Docker Compose
+    get_url:
+      url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+      dest: /usr/local/bin/docker-compose
+      mode: 0755
+
+  - name: Create the user 'coyo'
+    user:
+      name: coyo
+      groups: sudo
+      append: yes
+
+  - name: Create COYO data folder
+    file:
+      path: /home/coyo/coyo-data
+      state: directory
+      owner: coyo
+      group: coyo
+      mode: 0755
+
+  - name: Download and extract COYO
+    unarchive:
+      src: "https://download.coyoapp.com/release/enterprise/coyo4_{{ coyo_version }}.zip"
+      dest: /home/coyo/
+      remote_src: yes
+
+  - name: Run start COYO setup script
+    shell: ./start.sh
+    args:
+      chdir: /home/coyo/
+    become: yes
+    become_user: coyo
+
