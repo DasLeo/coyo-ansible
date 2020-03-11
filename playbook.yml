@@ -44,7 +44,7 @@
 
   - name: Download and extract COYO
     unarchive:
-      src: "https://download.coyoapp.com/release/enterprise/coyo4_{{ coyo_version }}.zip"
+      src: "https://download.coyoapp.com/release/enterprise/coyo4_{{ coyo_version }}-RELEASE.zip"
       dest: /home/coyo/
       remote_src: yes
 
