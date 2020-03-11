@@ -133,7 +133,7 @@
       regexp: '^COYO_CERT_FILE='
       line: 'COYO_CERT_FILE={{ cert_combined }}'
 
-  - name: Run start COYO setup script
+  - name: Start COYO setup script
     shell: ./start.sh
     args:
       chdir: /home/coyo/
