@@ -3,7 +3,7 @@
 ## TL;DR
 
 ```
-ansible-playbook --connection=local 127.0.0.1 playbook.yml --extra-vars "coyo_version=18.11.5 coyo_url=contoso.com coyo_profile=prod coyo_management_user=admin coyo_management_password=coyo4admin coyo_db_name=coyo coyo_db_user=coyo-postgres coyo_db_password=Sup3rD4tabase"
+ansible-playbook --connection=local --inventory 127.0.0.1 playbook.yml --extra-vars "coyo_version=18.11.5 coyo_url=contoso.com coyo_profile=prod coyo_management_user=admin coyo_management_password=coyo4admin coyo_db_name=coyo coyo_db_user=coyo-postgres coyo_db_password=Sup3rD4tabase"
 ```
 
 ## Introduction
@@ -24,5 +24,6 @@ To install COYO, you need to clone this repository first and then run the Ansibl
 ```
 git clone https://github.com/DasLeo/coyo-ansible.git
 cd coyo-ansible
-ansible-playbook --connection=local 127.0.0.1 playbook.yml
+
+ansible-playbook --connection=local --inventory 127.0.0.1 playbook.yml --extra-vars "coyo_version=18.11.5 coyo_url=contoso.com coyo_profile=prod coyo_management_user=admin coyo_management_password=coyo4admin coyo_db_name=coyo coyo_db_user=coyo-postgres coyo_db_password=Sup3rD4tabase"
 ```
