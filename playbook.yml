@@ -1,5 +1,5 @@
 ---
-- hosts: coyo-hosts
+- hosts: localhost
   vars:
     - docker_compose_version: 1.18.0
     - cert_path: "/home/coyo/certificate"
