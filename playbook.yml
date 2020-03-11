@@ -46,6 +46,8 @@
     unarchive:
       src: "https://download.coyoapp.com/release/enterprise/coyo4_{{ coyo_version }}-RELEASE.zip"
       dest: /home/coyo/
+      owner: coyo
+      group: coyo
       remote_src: yes
 
   - name: Substitute COYO backend URL
