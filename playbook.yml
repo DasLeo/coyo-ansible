@@ -139,4 +139,7 @@
       chdir: /home/coyo/
     become: yes
     become_user: coyo
+    register: start
+
+  - debug: msg="{{ start.stdout }}"
 
