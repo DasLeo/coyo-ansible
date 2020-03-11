@@ -50,6 +50,16 @@
       group: coyo
       remote_src: yes
       creates: /home/coyo/docker-compose.yml
+  - name: Read scripts from extracted file
+    find:
+      paths: /home/coyo
+      patterns: '*.sh'
+    register: scripts
+  - name: Make extracted scripts executable
+    file:
+      path: "{{ item.path }}"
+      mode: '0755'
+    with_items: "{{ scripts.files }}"
 
   - name: Substitute COYO backend URL
     lineinfile:
