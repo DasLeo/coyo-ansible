@@ -3,10 +3,10 @@
   vars:
     - docker_compose_version: 1.18.0
     - cert_path: "/home/coyo/certificate"
-    - coyo_cert: "{{ cert_path }}{{ coyo_url }}.crt"
-    - pempath: "{{ cert_path }}{{ coyo_url }}.pem"
-    - csrpath: "{{ cert_path }}{{ coyo_url }}.csr"
-    - pfxpath: "{{ cert_path }}{{ coyo_url }}.pfx"
+    - pempath: "{{ cert_path }}/{{ coyo_url }}.pem"
+    - csrpath: "{{ cert_path }}/{{ coyo_url }}.csr"
+    - cert: "{{ cert_path }}/{{ coyo_url }}.crt"
+    - cert_combined: "{{ cert_path }}/{{ coyo_url }}-combined.crt"
   become: yes
   tasks:
   - name: Install Docker
@@ -87,42 +87,36 @@
       regexp: '^COYO_DB_PASSWORD='
       line: 'COYO_DB_PASSWORD={{ coyo_db_password }}'
 
-  - file:
+  - name: Create directory for SSL certificates
+    file:
       path: "{{ cert_path }}"
       state: directory
+      owner: coyo
+      group: coyo
   - name: "Generate the private key file to sign the CSR"
     openssl_privatekey:
       path: "{{ pempath }}"
-      cipher: aes256
+      #cipher: aes256
   - name: "Generate the CSR file signed with the private key"
     openssl_csr:
       path: "{{ csrpath }}"
       privatekey_path: "{{ pempath }}"
-      privatekey_passphrase: "{{ private_key_password }}"
       common_name: "{{ coyo_url }}"
   - name: "Sign the CSR file as a CA to turn it into a certificate"
     openssl_certificate:
-      path: "{{ coyo_cert }}"
+      path: "{{ cert }}"
       privatekey_path: "{{ pempath }}"
-      privatekey_passphrase: "{{ private_key_password }}"
       csr_path: "{{ csrpath }}"
       provider: selfsigned
-  - name: "Convert the signed certificate into a PKCS12 file with the attached private key"
-    openssl_pkcs12:
-      action: export
-      path: "{{ pfxpath }}"
-      name: "{{ coyo_url }}"
-      privatekey_path: "{{ pempath }}"
-      privatekey_passphrase: "{{ private_key_password }}"
-      passphrase: password
-      certificate_path: "{{ coyo_cert }}"
-      state: present
+  - name: Concatenate private key and certificate into a single file
+    shell: "cat {{ pempath }} {{ cert }} > {{ cert_combined }}"
+      creates: "{{ cert_combined }}"
 
   - name: Substitute COYO SSL certificate
     lineinfile:
       path: /home/coyo/.env
       regexp: '^COYO_CERT_FILE='
-      line: 'COYO_CERT_FILE={{ coyo_cert }}'
+      line: 'COYO_CERT_FILE={{ cert_combined }}'
 
   - name: Run start COYO setup script
     shell: ./start.sh
