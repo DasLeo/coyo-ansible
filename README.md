@@ -14,7 +14,9 @@ This playbook makes it really easy to install COYO on a new Ubuntu host.
 
 - Ubuntu 18.04 LTS
 - Python ```apt install python```
+- pyOpenSSL ```apt install python-openssl```
 - Ansible ```apt install ansible```
+- unzip binary ```apt install unzip```
 - sudo ```apt install sudo```
 
 ## Install COYO
@@ -22,6 +24,8 @@ This playbook makes it really easy to install COYO on a new Ubuntu host.
 To install COYO, you need to clone this repository first and then run the Ansible Playbook on your local Ubuntu host. 
 
 ```
+apt install python python-openssl ansible unzip sudo
+
 git clone https://github.com/DasLeo/coyo-ansible.git
 cd coyo-ansible
 
