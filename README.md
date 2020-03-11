@@ -23,6 +23,6 @@ To install COYO, you need to clone this repository first and then run the Ansibl
 
 ```
 git clone https://github.com/DasLeo/coyo-ansible.git
-cd ansible-coyo
+cd coyo-ansible
 ansible-playbook --connection=local 127.0.0.1 playbook.yml
 ```
