@@ -29,7 +29,9 @@
   - name: Create the user 'coyo'
     user:
       name: coyo
-      groups: sudo
+      groups:
+        - sudo
+        - docker
       append: yes
 
   - name: Create COYO data folder
