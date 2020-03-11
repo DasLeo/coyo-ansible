@@ -49,6 +49,7 @@
       owner: coyo
       group: coyo
       remote_src: yes
+      creates: /home/coyo/docker-compose.yml
 
   - name: Substitute COYO backend URL
     lineinfile:
