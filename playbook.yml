@@ -125,6 +125,7 @@
       provider: selfsigned
   - name: Concatenate private key and certificate into a single file
     shell: "cat {{ pempath }} {{ cert }} > {{ cert_combined }}"
+    args:
       creates: "{{ cert_combined }}"
 
   - name: Substitute COYO SSL certificate
